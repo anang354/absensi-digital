@@ -1,0 +1,209 @@
+
+.box-guru {
+    display: flex;
+    gap: 10px;
+    flex-direction: row;
+}
+.box-guru section {
+    width: 100%;
+}
+.webcam-reader, .webcam-reader video {
+    display: inline-block;
+    width: 100% !important;
+    margin: auto;
+    height: auto !important;
+    border-radius: 10px;
+}
+.radio-button {
+	display: flex;
+	gap: 10px;
+	margin-bottom: 20px;
+}
+
+.webcam {
+    margin-top: 20px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 10px;
+}
+.button-camera {
+    margin-top: 15px;
+    width: 100%;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+@media screen and (max-width: 1400px) {
+    .box-guru {
+        flex-direction: column !important;
+    }
+}
+
+
+
+
+/* FLOATING BUTTON CSS */
+ .radial {
+	 position: fixed;
+	 z-index: 20;
+	 bottom: 150px;
+	 right: 50px;
+}
+ .radial .triggerButton {
+	 position: absolute;
+	 z-index: 9;
+	 left: 50%;
+	 top: 50%;
+	 display: flex;
+	 justify-content: center;
+	 align-items: center;
+	 width: 60px;
+	 height: 60px;
+	 border: none;
+	 color: #fff;
+	 font-size: 20px;
+	 border-radius: 50%;
+	 text-decoration: none;
+	 background: linear-gradient(0deg, rgba(22, 9, 240, 1) 0%, rgba(49, 110, 244, 1) 100%);
+	 box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.15), 0px 4px 8px rgba(0, 0, 0, 0.2);
+	 transition: all 0.15s ease-in-out;
+	 transform: translate(-50%, -50%);
+}
+ .radial .triggerButton:hover {
+	 background-color: #00009a;
+}
+ .radial .triggerButton .faOpen {
+	 position: absolute;
+	 font-size: 14px;
+	 transform: scale(1);
+	 transition: 0.25s ease-in-out;
+}
+ .radial .triggerButton .faOpen:nth-child(1) {
+	 top: 20%;
+}
+ .radial .triggerButton .faOpen:nth-child(2) {
+	 left: 20%;
+	 top: 52%;
+}
+ .radial .triggerButton .faOpen:nth-child(3) {
+	 right: 20%;
+	 top: 52%;
+}
+ .radial .triggerButton .faClose {
+	 position: absolute;
+	 top: 50%;
+	 left: 50%;
+	 opacity: 0;
+	 visibility: hidden;
+	 transform: scale(0) translate(-50%, -50%);
+	 transition: 0.25s ease-in-out;
+}
+ .radial .radialMenu {
+	 --width: 250px;
+	 width: var(--width);
+	 height: var(--width);
+	 padding: 0;
+	 margin: 0;
+	 position: absolute;
+	 top: 50%;
+	 left: 50%;
+	 transform: translate(-50%, -50%);
+}
+ .radial .radialItem {
+	 list-style: none;
+	 position: absolute;
+	 width: 55px;
+	 height: 55px;
+	 top: 50%;
+	 left: 50%;
+	 transform: translate(-50%, -50%);
+	 transition: all 0.3s ease;
+}
+ .radial .radialItem:nth-child(1) a, .radial .radialItem:nth-child(1) span {
+	 background: #6009f0;
+	 background: linear-gradient(-90deg, rgba(96, 9, 240, 1) 0%, rgba(129, 5, 240, 1) 100%);
+}
+ .radial .radialItem:nth-child(2) a, .radial .radialItem:nth-child(2) span {
+	 background-color: #89d8d3;
+	 background-image: linear-gradient(90deg, #89d8d3 0%, #03c8a8);
+}
+ .radial .radialItem:nth-child(3) a, .radial .radialItem:nth-child(3) span {
+	 background: #ff1b00;
+	 background: linear-gradient(-90deg, rgba(255, 27, 0, 1) 0%, rgba(251, 75, 2, 1) 100%);
+}
+ .radial .radialItem a {
+	 position: relative;
+	 display: flex;
+	 align-items: center;
+	 justify-content: center;
+	 width: 100%;
+	 height: 100%;
+	 color: #fff;
+	 background: #ff4081;
+	 border-radius: 50%;
+	 text-decoration: none;
+}
+ .radial .radialItem a:hover {
+	 transition-delay: 0s;
+	 background-color: #f30053;
+}
+ .radial .radialItem a:hover span {
+	 opacity: 1;
+	 right: calc(100% + 15px);
+	 visibility: visible;
+}
+ .radial .radialItem span {
+	 position: absolute;
+	 top: 50%;
+	 background-color: #f30053;
+	 right: 100%;
+	 transform: translateY(-50%);
+	 white-space: nowrap;
+	 border-radius: 5px;
+	 padding: 5px;
+	 font-size: 14px;
+	 transition: 0.25s;
+	 opacity: 0;
+	 visibility: hidden;
+}
+ .radial.active .triggerButton .faOpen {
+	 opacity: 0;
+	 visibility: hidden;
+	 transform: scale(0);
+}
+ .radial.active .triggerButton .faClose {
+	 opacity: 1;
+	 visibility: visible;
+	 transform-origin: top left;
+	 transform: scale(1) translate(-50%, -50%);
+}
+ .radial.active .radialItem {
+	 --angle: 0deg;
+	 --point-size: 60px;
+	 --countItem: 8;
+	/* we subtract the point size to place point inside circle */
+	 --radius: calc((var(--width) / 2) - (var(--point-size) / 2));
+	 --x: calc(var(--radius) * cos(var(--angle)));
+	 --y: calc(var(--radius) * sin(var(--angle)));
+	/* position point at center of circle with radius. We add x and y values to move to edge of circle. */
+	 top: calc(var(--radius) + var(--y) + (var(--point-size) / 2));
+	 left: calc(var(--radius) + var(--x) + (var(--point-size) / 2));
+	 width: var(--point-size);
+	 height: var(--point-size);
+}
+ .radial.active .radialItem a {
+	 box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.15), 0px 4px 8px rgba(0, 0, 0, 0.2);
+}
+ .radial.active .radialItem:nth-child(1) {
+	 --angle: 270deg;
+}
+ .radial.active .radialItem:nth-child(2) {
+	 --angle: 200deg;
+}
+ .radial.active .radialItem:nth-child(3) {
+	 --angle: 130deg;
+}
+ 
