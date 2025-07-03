@@ -7,6 +7,7 @@ use Filament\Tables;
 use Filament\Forms\Form;
 use App\Models\AbsenGuru;
 use Filament\Tables\Table;
+use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
@@ -29,8 +30,46 @@ class AbsenGuruResource extends Resource
     {
         return $form
             ->schema([
-                
+               Forms\Components\Placeholder::make('guru.nama')
+                    ->label('Nama Guru')
+                    ->content(fn (?AbsenGuru $record) => $record ? $record->guru->nama : 'N/A'),
+                 Forms\Components\Select::make('status') // 'status' adalah nama kolom di database Anda
+                ->label('Status Kehadiran') // Label yang akan tampil di form
+                ->options([
+                    'hadir' => 'Hadir',
+                    'izin' => 'Izin',
+                    'sakit' => 'Sakit',
+                    'alpha' => 'Alpha',
+                ])
+                ->required() // Opsional: membuat field ini wajib diisi
+                ->native(false),
+                Forms\Components\TextInput::make('keterangan'),
+               Forms\Components\Section::make('Foto Selfie')->schema([
+                    Forms\Components\FileUpload::make('foto_in')->disk('public')->image()
+                    ->deletable(false),  
+                    Forms\Components\FileUpload::make('foto_out')->disk('public')->image()
+                    ->deletable(false)
+               ])->columns(2)  
             ]);
+    }
+
+    public static function infolist(Infolist $infolist) : Infolist 
+    {
+        return $infolist->schema([
+            \Filament\Infolists\Components\TextEntry::make('guru.nama'),
+            \Filament\Infolists\Components\TextEntry::make('status')
+            ->badge()
+            ->color(fn (string $state): string => match ($state) {
+                'hadir' => 'success',
+                'sakit' => 'warning',
+                'izin' => 'info',
+                'alpha' => 'danger',
+            }),
+            \Filament\Infolists\Components\TextEntry::make('checkin'),
+            \Filament\Infolists\Components\TextEntry::make('checkout'),
+            \Filament\Infolists\Components\ImageEntry::make('foto_in')->disk('public'),
+            \Filament\Infolists\Components\ImageEntry::make('foto_out')->disk('public'),
+        ]);
     }
 
     public static function table(Table $table): Table
@@ -63,7 +102,7 @@ class AbsenGuruResource extends Resource
                     ])
             ])
             ->actions([
-                Tables\Actions\EditAction::make()
+                Tables\Actions\ViewAction::make()->slideOver()->color('info'),
             ], position: ActionsPosition::BeforeColumns)
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

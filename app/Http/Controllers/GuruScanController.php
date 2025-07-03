@@ -52,7 +52,7 @@ class GuruScanController extends Controller
                 $absenGuru->tanggal_presensi = $tanggal_presensi;
                 $absenGuru->checkin = $jam;
                 $absenGuru->lokasi_in = $lokasi;
-                $absenGuru->foto_in = $fileName;
+                $absenGuru->foto_in = 'uploads/absensi/'.$fileName;
                 $absenGuru->semester_id = $semesterId;
                 $absenGuru->status = 'hadir';
                 $absenGuru->save();
@@ -67,7 +67,7 @@ class GuruScanController extends Controller
             $getAbsen = AbsenGuru::where('guru_id', $guruId)->where('tanggal_presensi', $tanggal_presensi)->first();
             $getAbsen->checkout = $jam;
             $getAbsen->lokasi_out = $lokasi;
-            $getAbsen->foto_out = $fileName;
+            $getAbsen->foto_out = 'uploads/absensi/'.$fileName;
             $getAbsen->save();
             Storage::put($file, $image_base64);
             echo "success|Terimakasih, Hati-hati dijalan :)|out";
