@@ -39,7 +39,7 @@ class GuruResource extends Resource
             ->schema([
                     Forms\Components\Section::make('Personal Data')->schema([
                         Forms\Components\TextInput::make('nama')->required()
-                    ->prefixIcon('heroicon-o-user-circle'),                
+                        ->prefixIcon('heroicon-o-user-circle'),                
                         Forms\Components\Radio::make('jenis_kelamin')
                         ->options([
                             'pria' => 'Pria',
@@ -93,9 +93,9 @@ class GuruResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\ImageColumn::make('foto')->circular(),
-                TextColumn::make('nip')->copyable()
+                TextColumn::make('nip')->copyable()->searchable()
                 ->copyMessage('Nip copied'),
-                TextColumn::make('nama'),
+                TextColumn::make('nama')->searchable(),
                 TextColumn::make('jenis_kelamin'),
                 TextColumn::make('nomor_handphone')->copyable()
                 ->copyMessage('Nomor Handphone copied'),
@@ -193,7 +193,7 @@ class GuruResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\AbsenGurusRelationManager::class, 
         ];
     }
 

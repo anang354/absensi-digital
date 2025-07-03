@@ -76,7 +76,7 @@ class AbsenGuruResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('guru.nama'),
+                TextColumn::make('guru.nama')->searchable(),
                 TextColumn::make('tanggal_presensi'),
                 TextColumn::make('checkin'),
                 TextColumn::make('checkout'),
@@ -104,6 +104,9 @@ class AbsenGuruResource extends Resource
             ->actions([
                 Tables\Actions\ViewAction::make()->slideOver()->color('info'),
             ], position: ActionsPosition::BeforeColumns)
+            ->headerActions([
+                //
+            ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
