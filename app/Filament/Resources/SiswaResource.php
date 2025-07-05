@@ -48,7 +48,7 @@ class SiswaResource extends Resource
                         Forms\Components\TextInput::make('nomor_hp')->required()->numeric()
                         ->prefixIcon('heroicon-o-phone'),
                         Forms\Components\Textarea::make('alamat'),
-                        Forms\Components\TextInput::make('wali')->label('Nama Wali Murid'),
+                        Forms\Components\TextInput::make('wali')->label('Nama Wali Murid')->autocomplete(false),
                     ])->columnSpan(4)->columns(2),
                 Forms\Components\Section::make('User')->schema([
                     Forms\Components\Select::make('kelas_id')->label('Kelas')
@@ -180,6 +180,7 @@ class SiswaResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
