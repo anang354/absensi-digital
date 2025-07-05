@@ -26,6 +26,11 @@ class Pengaturan extends Page implements HasForms
     protected static string $view = 'filament.pages.pengaturan';
 
     protected ?string $subheading = 'Form untuk pengaturan website';
+    
+    public static function canAccess(): bool
+    {
+        return auth()->user()->level === 'admin' || auth()->user()->level === 'superadmin';
+    }
 
     public function mount(): void 
     {
@@ -63,7 +68,7 @@ class Pengaturan extends Page implements HasForms
     protected function getFormActions(): array 
     {
         return [
-            Action::make('save')->submit('save')
+            Action::make('save')->submit('save'),
         ];
     }
 

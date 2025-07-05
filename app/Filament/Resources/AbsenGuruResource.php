@@ -55,20 +55,59 @@ class AbsenGuruResource extends Resource
 
     public static function infolist(Infolist $infolist) : Infolist 
     {
-        return $infolist->schema([
-            \Filament\Infolists\Components\TextEntry::make('guru.nama'),
-            \Filament\Infolists\Components\TextEntry::make('status')
-            ->badge()
-            ->color(fn (string $state): string => match ($state) {
-                'hadir' => 'success',
-                'sakit' => 'warning',
-                'izin' => 'info',
-                'alpha' => 'danger',
-            }),
-            \Filament\Infolists\Components\TextEntry::make('checkin'),
-            \Filament\Infolists\Components\TextEntry::make('checkout'),
-            \Filament\Infolists\Components\ImageEntry::make('foto_in')->disk('public'),
-            \Filament\Infolists\Components\ImageEntry::make('foto_out')->disk('public'),
+        return $infolist
+        ->schema([
+            \Filament\Infolists\Components\Section::make('')
+            ->columns([
+                'sm' => 3,
+                'xl' => 6,
+                '2xl' => 8,
+            ])
+            ->schema([
+                \Filament\Infolists\Components\TextEntry::make('guru.nama')->columnSpan([
+                'sm' => 8,
+                'xl' => 8,
+                '2xl' => 8,
+            ]),
+                \Filament\Infolists\Components\TextEntry::make('status')
+                ->badge()
+                ->color(fn (string $state): string => match ($state) {
+                    'hadir' => 'success',
+                    'sakit' => 'warning',
+                    'izin' => 'info',
+                    'alpha' => 'danger',
+                })->columnSpan([
+                'sm' => 2,
+                'xl' => 3,
+                '2xl' => 4,
+            ]),
+                \Filament\Infolists\Components\TextEntry::make('keterangan')->columnSpan([
+                'sm' => 2,
+                'xl' => 3,
+                '2xl' => 4,
+            ]),
+                \Filament\Infolists\Components\TextEntry::make('checkin')->columnSpan([
+                'sm' => 2,
+                'xl' => 3,
+                '2xl' => 4,
+            ]),
+                \Filament\Infolists\Components\TextEntry::make('checkout')->columnSpan([
+                'sm' => 2,
+                'xl' => 3,
+                '2xl' => 4,
+            ]),
+                \Filament\Infolists\Components\ImageEntry::make('foto_in')->disk('public')->columnSpan([
+                'sm' => 2,
+                'xl' => 3,
+                '2xl' => 4,
+            ]),
+                \Filament\Infolists\Components\ImageEntry::make('foto_out')->disk('public')->columnSpan([
+                'sm' => 2,
+                'xl' => 3,
+                '2xl' => 4,
+            ]),
+            ])
+            
         ]);
     }
 
@@ -104,9 +143,6 @@ class AbsenGuruResource extends Resource
             ->actions([
                 Tables\Actions\ViewAction::make()->slideOver()->color('info'),
             ], position: ActionsPosition::BeforeColumns)
-            ->headerActions([
-                //
-            ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),

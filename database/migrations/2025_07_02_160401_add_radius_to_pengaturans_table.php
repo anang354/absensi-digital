@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('pengaturans', function (Blueprint $table) {
-            $table->integer('radius')->after('longitude');
+            $table->integer('radius')->after('longitude')->nullable();
         });
     }
 
