@@ -36,15 +36,5 @@ class Guru extends Model
                 Storage::disk('public')->delete($guru->foto);
             }
         });
-
-        // Catatan: Jika Anda menggunakan soft deletes pada model Guru,
-        // event 'deleting' akan terpanggil saat soft delete.
-        // Jika Anda ingin user dihapus hanya saat Guru di-force delete,
-        // gunakan event 'forceDeleting' (Anda perlu menambahkan SoftDeletes trait pada Guru)
-        // static::forceDeleting(function ($guru) {
-        //     if ($guru->user) {
-        //         $guru->user->forceDelete(); // Pastikan User juga mendukung forceDelete jika soft delete
-        //     }
-        // });
     }
 }

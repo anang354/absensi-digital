@@ -12,6 +12,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Jobs\DeleteAbsensiBySemester; // Import Job yang sudah dibuat
 
 class SemesterResource extends Resource
 {
@@ -72,6 +73,25 @@ class SemesterResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\Action::make('delete_absensi')
+                    ->label('Hapus Data Absensi')
+                    ->icon('heroicon-o-trash')
+                    ->color('danger')
+                    ->requiresConfirmation() // Menampilkan modal konfirmasi standar Filament
+                    ->modalHeading(fn (Semester $record) => 'Hapus Data Absensi Semester ' . $record->nama_semester . '?')
+                    ->modalDescription('Tindakan ini akan menghapus SEMUA data presensi guru dan siswa yang terkait dengan semester ini. Tindakan ini tidak dapat dibatalkan.')
+                    ->modalSubmitActionLabel('Ya, Hapus Sekarang')
+                    ->action(function (Semester $record) {
+                        // Dispatch Job ke queue
+                        DeleteAbsensiBySemester::dispatch($record->id);
+
+                        // Beri notifikasi ke user bahwa proses dimulai di background
+                        \Filament\Notifications\Notification::make()
+                            ->title('Penghapusan data absensi dimulai.')
+                            ->body('Proses akan berjalan di latar belakang. Anda akan menerima notifikasi jika selesai atau ada kesalahan.')
+                            ->success()
+                            ->send();
+                    }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

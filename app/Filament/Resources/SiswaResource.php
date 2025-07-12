@@ -51,7 +51,7 @@ class SiswaResource extends Resource
                         Forms\Components\TextInput::make('wali')->label('Nama Wali Murid')->autocomplete(false),
                     ])->columnSpan(4)->columns(2),
                 Forms\Components\Section::make('User')->schema([
-                    Forms\Components\Select::make('kelas_id')->label('Kelas')
+                    Forms\Components\Select::make('kelas_id')->label('Kelas')->required()
                     ->options(\App\Models\Kelas::all()->pluck('nama_kelas', 'id')),
                     Forms\Components\TextInput::make('username')->required()
                     ->unique(ignoreRecord: true, table: 'users')
