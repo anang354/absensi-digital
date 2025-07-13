@@ -17,13 +17,15 @@ class DeleteAbsensiBySemester implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public $semesterId;
+    public $userId;
 
     /**
      * Create a new job instance.
      */
-    public function __construct(int $semesterId)
+    public function __construct(int $semesterId, int $userId)
     {
         $this->semesterId = $semesterId;
+        $this->userId = $userId;
     }
 
     /**
@@ -33,28 +35,27 @@ class DeleteAbsensiBySemester implements ShouldQueue
     {
         //
         $semester = Semester::find($this->semesterId);
+        $user = \App\Models\User::find($this->userId);
 
         if (!$semester) {
             //Notifikasi jika semester tidak ditemukan (opsional)
             Notification::make('')
                 ->title('Gagal menghapus data absensi: Semester tidak ditemukan.')
                 ->danger()
-                ->sendToDatabase(auth()->user()); // Kirim ke user yang memicu action
+                ->sendToDatabase($user); // Kirim ke user yang memicu action
             return;
         }
-
+        $semesterName = $semester->semester.' '.$semester->tahun;
         // Hapus data AbsenGuru
         AbsenGuru::where('semester_id', $this->semesterId)->delete();
 
         // Hapus data AbsenSiswa
         AbsenSiswa::where('semester_id', $this->semesterId)->delete();
 
-        // Opsional: Kirim notifikasi sukses setelah selesai
-        // $recipient = auth()->user();
-
-        // Notification::make()
-        //     ->title('Delete successfully')
-        //     ->sendToDatabase($recipient);
+        Notification::make()
+            ->success()
+            ->title('Berhasil menghapus semua data pada semester '.$semesterName)
+            ->sendToDatabase($user);
     }
 
     // public function failed(\Throwable $exception): void

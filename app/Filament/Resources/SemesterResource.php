@@ -2,16 +2,17 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\SemesterResource\Pages;
-use App\Filament\Resources\SemesterResource\RelationManagers;
-use App\Models\Semester;
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
 use Filament\Tables;
+use App\Models\Semester;
+use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Filament\Resources\Resource;
+use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Builder;
+use App\Filament\Resources\SemesterResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Resources\SemesterResource\RelationManagers;
 use App\Jobs\DeleteAbsensiBySemester; // Import Job yang sudah dibuat
 
 class SemesterResource extends Resource
@@ -65,6 +66,11 @@ class SemesterResource extends Resource
                             // Kecuali record yang sedang diupdate ($record->id)
                             \App\Models\Semester::where('id', '!=', $record->id)
                                     ->update(['is_active' => false]);
+                            $recipient = auth()->user();
+                            Notification::make()
+                                ->info()
+                                ->title(auth()->user()->name.' telah merubah semester aktif menjadi semester '.$record->semester.' '.$record->tahun)
+                                ->sendToDatabase($recipient);
                         }
                     }),
             ])
@@ -83,10 +89,10 @@ class SemesterResource extends Resource
                     ->modalSubmitActionLabel('Ya, Hapus Sekarang')
                     ->action(function (Semester $record) {
                         // Dispatch Job ke queue
-                        DeleteAbsensiBySemester::dispatch($record->id);
+                        DeleteAbsensiBySemester::dispatch($record->id, auth()->user()->id);
 
                         // Beri notifikasi ke user bahwa proses dimulai di background
-                        \Filament\Notifications\Notification::make()
+                        Notification::make()
                             ->title('Penghapusan data absensi dimulai.')
                             ->body('Proses akan berjalan di latar belakang. Anda akan menerima notifikasi jika selesai atau ada kesalahan.')
                             ->success()
