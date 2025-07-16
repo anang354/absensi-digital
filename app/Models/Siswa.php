@@ -29,6 +29,10 @@ class Siswa extends Model
     {
         return $this->hasMany(AbsenSiswa::class);
     }
+    public function hafalan() : HasMany
+    {
+        return $this->hasMany(SetorHafalan::class);
+    }
 
      protected static function booted()
     {

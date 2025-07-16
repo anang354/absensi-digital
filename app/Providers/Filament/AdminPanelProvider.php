@@ -44,6 +44,11 @@ class AdminPanelProvider extends PanelProvider
                     ->icon('heroicon-o-qr-code')
                     ->url('/admin/scan-siswa')
                     ->visible(fn ():bool => !auth()->user()->isSiswa()),
+                MenuItem::make('')
+                    ->label('Setoran Hafalan')
+                    ->icon('heroicon-o-book-open')
+                    ->url('/admin/setor-hafalan')
+                    ->visible(fn ():bool => !auth()->user()->isSiswa()),
             ])
             ->databaseNotifications()
             ->maxContentWidth('full')
