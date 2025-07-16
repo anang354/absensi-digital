@@ -10,6 +10,7 @@ use Filament\Forms\Components\Radio;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Forms\Components\TextInput;
+use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Concerns\InteractsWithTable;
 
@@ -52,12 +53,11 @@ class DaftarSetoranHafalan extends Page implements HasTable
                 TextColumn::make('nilai')
                 ->badge()
                 ->color(fn (string $state): string => match ($state) {
-                    'baik' => 'success',
-                    'cukup' => 'info',
-                })
-                ->icon(fn (string $state): string => match ($state) {
-                    'baik' => 'heroicon-o-star',
-                    'cukup' => 'heroicon-o-check-badge',
+                    'Mumtaz' => 'success',
+                    'Jayyid Jiddan' => 'success',
+                    'Jayyid' => 'info',
+                    'Maqbul' => 'warning',
+                    'Naqis' => 'danger',
                 }),
                 TextColumn::make('user.name')->label('Penyimak'),
                 TextColumn::make('created_at')->label('Waktu')
@@ -71,10 +71,9 @@ class DaftarSetoranHafalan extends Page implements HasTable
                     ->form([
                         TextInput::make('surat'),
                         TextInput::make('ayat'),
-                        Radio::make('nilai')
+                        Select::make('nilai')
                         ->options([
-                            'baik' => 'baik',
-                            'cukup' => 'cukup',
+                           SetorHafalan::NILAI_HAFALAN
                         ]),
                     ])
                     ->fillForm(function (SetorHafalan $record) {
@@ -83,6 +82,15 @@ class DaftarSetoranHafalan extends Page implements HasTable
                     ->action(function (array $data, SetorHafalan $record) {
                         $record->update($data);
                     }),
+            ])
+            ->filters([
+                SelectFilter::make('kelas')
+                    ->relationship('siswa.kelas', 'nama_kelas') // Ini adalah kuncinya!
+                    ->label('Filter Berdasarkan Kelas')
+                    ->placeholder('Pilih Kelas')
+                    ->options(
+                        \App\Models\Kelas::pluck('nama_kelas', 'id')->toArray()
+                    ),
             ]);
     }
 }

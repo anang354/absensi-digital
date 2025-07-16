@@ -83,4 +83,10 @@ class LoginActive extends BasePage
 
         return app(LoginResponse::class);
     }
+     protected function throwFailureValidationException(): never
+    {
+        throw ValidationException::withMessages([
+            'data.login' => __('filament-panels::pages/auth/login.messages.failed'),
+        ]);
+    }
 }

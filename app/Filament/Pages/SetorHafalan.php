@@ -5,7 +5,6 @@ namespace App\Filament\Pages;
 use Filament\Forms\Form;
 use Filament\Pages\Page;
 use Filament\Actions\Action;
-use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Contracts\HasForms;
@@ -98,9 +97,8 @@ class SetorHafalan extends Page implements HasForms
                         ->searchable()
                         ->multiple(),
                     TextInput::make('ayat'),
-                    Radio::make('nilai')->options([
-                        'baik' => 'Baik',
-                        'cukup' => 'Cukup',
+                    Select::make('nilai')->options([
+                        \App\Models\SetorHafalan::NILAI_HAFALAN
                     ])->required(),
                     TextInput::make('keterangan'),
                 ])->columnSpan(1),

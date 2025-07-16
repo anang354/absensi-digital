@@ -18,6 +18,14 @@ class SetorHafalan extends Model
         return $this->belongsTo(User::class);
     }
 
+    const NILAI_HAFALAN = [
+        'Mumtaz' => 'Mumtaz',
+        'Jayyid Jiddan' => 'Jayyid Jiddan',
+        'Jayyid' => 'Jayyid',
+        'Maqbul' => 'Maqbul',
+        'Naqis' => 'Naqis',
+    ];
+
     const SURAT_ALQURAN = [
     'Al-Fatihah' => 'Al-Fatihah',
     'Al-Baqarah' => 'Al-Baqarah',
