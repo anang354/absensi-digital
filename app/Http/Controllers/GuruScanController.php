@@ -17,7 +17,7 @@ class GuruScanController extends Controller
         //$lokasiKantor = [$pengaturan->latitude, $pengaturan->longitude];
         //1.166753, 104.018848
         // "1.1667241","104.018855"
-        $semesterId = \App\Models\Semester::where('is_active', true)->first()->value('id');
+        $semesterId = \App\Models\Semester::where('is_active', true)->value('id');
         $guruId = auth()->user()->guru->id;
         $tanggal_presensi = date('Y-m-d');
         $cekPresensi = AbsenGuru::where('guru_id', $guruId)->where('tanggal_presensi', $tanggal_presensi)->count();      
