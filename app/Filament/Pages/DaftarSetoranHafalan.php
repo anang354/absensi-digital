@@ -7,6 +7,7 @@ use Filament\Tables\Table;
 use App\Models\SetorHafalan;
 use Filament\Tables\Actions\Action;
 use Filament\Forms\Components\Radio;
+use Filament\Forms\Components\Select;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Forms\Components\TextInput;
