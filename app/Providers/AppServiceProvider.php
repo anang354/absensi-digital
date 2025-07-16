@@ -31,9 +31,9 @@ class AppServiceProvider extends ServiceProvider
             // Js::make('absen-guru', asset('js/absen-guru.js')),
             Css::make('absen-guru', asset('css/absen-guru.css')),
         ]);
-        FilamentView::registerRenderHook(
-            PanelsRenderHook::FOOTER,
-            fn (): View => view('components.absen-guru-floating'),
-        );
+        // FilamentView::registerRenderHook(
+        //     PanelsRenderHook::FOOTER,
+        //     fn (): View => view('components.absen-guru-floating'),
+        // );
     }
 }

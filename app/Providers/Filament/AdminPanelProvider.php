@@ -6,10 +6,11 @@ use Filament\Pages;
 use Filament\Panel;
 use Filament\Widgets;
 use Filament\PanelProvider;
+use Filament\Navigation\MenuItem;
 use Filament\Support\Colors\Color;
 use Illuminate\Support\Facades\View;
-use Filament\Http\Middleware\Authenticate;
 use App\Filament\Pages\Auth\LoginActive;
+use Filament\Http\Middleware\Authenticate;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -31,6 +32,18 @@ class AdminPanelProvider extends PanelProvider
             ->login(LoginActive::class)
             ->colors([
                 'primary' => Color::Amber,
+            ])
+            ->userMenuItems([
+                MenuItem::make('')
+                    ->label('Take Absen')
+                    ->icon('heroicon-o-camera')
+                    ->url('/admin/guru-scan')
+                    ->visible(fn ():bool => auth()->user()->isAdmin() || auth()->user()->isGuru()),
+                MenuItem::make('')
+                    ->label('Scan Siswa')
+                    ->icon('heroicon-o-qr-code')
+                    ->url('/admin/scan-siswa')
+                    ->visible(fn ():bool => !auth()->user()->isSiswa()),
             ])
             ->databaseNotifications()
             ->maxContentWidth('full')
