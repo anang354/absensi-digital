@@ -9,7 +9,7 @@ use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 use Illuminate\Support\Facades\View;
 use Filament\Http\Middleware\Authenticate;
-use App\Filament\Pages\Auth\LoginByUsername;
+use App\Filament\Pages\Auth\LoginActive;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -28,7 +28,7 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
-            ->login(LoginByUsername::class)
+            ->login(LoginActive::class)
             ->colors([
                 'primary' => Color::Amber,
             ])
