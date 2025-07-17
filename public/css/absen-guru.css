@@ -207,3 +207,9 @@
 	 --angle: 130deg;
 }
  
+#html5-qrcode-button-camera-permission {
+	background: rgb(245, 158, 11);
+    padding: 7px;
+    border-radius: 5px;
+	font-size: 11pt;
+}
