@@ -50,6 +50,7 @@ class AdminPanelProvider extends PanelProvider
                     ->url('/admin/setor-hafalan')
                     ->visible(fn ():bool => !auth()->user()->isSiswa()),
             ])
+            ->favicon(asset('storage/'.\App\Models\Pengaturan::first()->value('logo_sekolah')))
             ->databaseNotifications()
             ->maxContentWidth('full')
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
