@@ -13,7 +13,7 @@ class GuruScanController extends Controller
 
     public function store(Request $request)
     {
-        $pengaturan = \App\Models\Pengaturan::select('latitude', 'longitude')->first();
+        $pengaturan = \App\Models\Pengaturan::select('latitude', 'longitude', 'radius')->first();
         //$lokasiKantor = [$pengaturan->latitude, $pengaturan->longitude];
         //1.166753, 104.018848
         // "1.1667241","104.018855"
@@ -34,7 +34,7 @@ class GuruScanController extends Controller
         $image_base64 = base64_decode($image_parts[1]);
         $fileName = $formatName.".png";
         $file = $folderPath . $fileName;
-        if($radius > 80) {
+        if($radius > $pengaturan->radius) {
             echo "error|Maaf, Anda Berada ".$radius." meter Diluar Radius Absen!";
         } else {
                 if($cekPresensi == 0) {
