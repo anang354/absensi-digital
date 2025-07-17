@@ -17,6 +17,7 @@ use Filament\Tables\Columns\TextColumn;
 use Illuminate\Support\Facades\Storage;
 use Filament\Notifications\Notification;
 use Filament\Forms\Components\FileUpload;
+use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\SiswaResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -99,7 +100,13 @@ class SiswaResource extends Resource
                 TextColumn::make('wali')->toggleable()->searchable(),
             ])
             ->filters([
-                //
+                SelectFilter::make('kelas')
+                    ->relationship('kelas', 'nama_kelas') // Ini adalah kuncinya!
+                    ->label('Filter Berdasarkan Kelas')
+                    ->placeholder('Pilih Kelas')
+                    ->options(
+                        \App\Models\Kelas::pluck('nama_kelas', 'id')->toArray()
+                    ),
             ])
             ->headerActions([
                 Action::make('importSiswa')

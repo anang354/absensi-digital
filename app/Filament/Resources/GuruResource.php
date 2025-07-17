@@ -10,20 +10,21 @@ use Filament\Tables\Table;
 use App\Imports\GurusImport;
 use Filament\Resources\Resource;
 use Illuminate\Support\Facades\Hash;
+use Maatwebsite\Excel\Facades\Excel;
 use Filament\Tables\Columns\TextColumn;
+use Illuminate\Support\Facades\Storage; 
+use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\GuruResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Michaeld555\FilamentCroppie\Components\Croppie;
+use Illuminate\Support\Facades\URL; // <<< Import ini
+use Filament\Forms\Components\Actions; // <<< Import ini
 use Filament\Tables\Actions\Action; // <<< Import Action
 use App\Filament\Resources\GuruResource\RelationManagers;
 use Filament\Forms\Components\FileUpload; // <<< Import FileUpload
 use Filament\Notifications\Notification; // <<< Import Notification
-use Maatwebsite\Excel\Facades\Excel;
-use Illuminate\Support\Facades\Storage; 
 use Filament\Forms\Components\Actions\Action as FormAction; // <<< Import ini untuk Action di dalam Form
-use Illuminate\Support\Facades\URL; // <<< Import ini
-use Filament\Forms\Components\Actions; // <<< Import ini
 
 class GuruResource extends Resource
 {
@@ -38,22 +39,29 @@ class GuruResource extends Resource
         return $form
             ->schema([
                     Forms\Components\Section::make('Personal Data')->schema([
-                        Forms\Components\TextInput::make('nama')->required()
+                        Forms\Components\TextInput::make('nama')->required()->columnSpan(4)
                         ->prefixIcon('heroicon-o-user-circle'),                
                         Forms\Components\Radio::make('jenis_kelamin')
                         ->options([
                             'pria' => 'Pria',
                             'wanita' => 'Wanita',
-                        ]),
+                        ])->columnSpan(2),
+                        Forms\Components\Radio::make('jenjang')
+                        ->options([
+                            'tk' => 'TK',
+                            'smp' => 'SMP',
+                            'smk' => 'SMK',
+                        ])->columnSpan(2),
                         Forms\Components\TextInput::make('nomor_handphone')->required()->numeric()
-                        ->prefixIcon('heroicon-o-phone'),
+                        ->prefixIcon('heroicon-o-phone')->columnSpan(4),
                         Forms\Components\TextInput::make('tempat_lahir')
-                        ->prefixIcon('heroicon-o-map-pin'),
-                        Forms\Components\DatePicker::make('tanggal_lahir'),
-                        Forms\Components\Textarea::make('alamat'),
-                        Forms\Components\TextInput::make('nik')->numeric(),
-                        Forms\Components\TextInput::make('nip')->label('NIP/NUPTK')->numeric(),
-                    ])->columnSpan(4)->columns(2),
+                        ->prefixIcon('heroicon-o-map-pin')->columnSpan(4),
+                        Forms\Components\DatePicker::make('tanggal_lahir')->columnSpan(4),
+                        Forms\Components\Textarea::make('alamat')->columnSpan(4),
+                        Forms\Components\TextInput::make('nik')->numeric()->columnSpan(4),
+                        Forms\Components\TextInput::make('nip')->label('NIP/NUPTK')->numeric()->columnSpan(4),
+                        Forms\Components\TextInput::make('jabatan')->label('Jabatan')->columnSpan(4),
+                    ])->columnSpan(4)->columns(8),
                 Forms\Components\Section::make('User')->schema([
                     Forms\Components\TextInput::make('username')->required()
                     ->unique(ignoreRecord: true, table: 'users')
@@ -96,12 +104,19 @@ class GuruResource extends Resource
                 TextColumn::make('nip')->copyable()->searchable()
                 ->copyMessage('Nip copied'),
                 TextColumn::make('nama')->searchable(),
-                TextColumn::make('jenis_kelamin'),
+                TextColumn::make('jenis_kelamin')->toggleable(),
                 TextColumn::make('nomor_handphone')->copyable()
                 ->copyMessage('Nomor Handphone copied'),
+                TextColumn::make('jenjang'),
+                TextColumn::make('jabatan')->toggleable(),
             ])
             ->filters([
-                //
+                SelectFilter::make('jenjang')
+                    ->placeholder('Pilih Jenjang')
+                    ->multiple()
+                    ->options([
+                        GURU::JENJANG_SEKOLAH
+                    ]),
             ])
             ->headerActions([
                 Action::make('importGurus')

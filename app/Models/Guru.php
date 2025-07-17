@@ -20,6 +20,12 @@ class Guru extends Model
         return $this->hasMany(AbsenGuru::class);
     }
 
+    const JENJANG_SEKOLAH = [
+        'tk' => 'TK',
+        'smp' => 'SMP',
+        'smk' => 'SMK',
+    ];
+
     protected static function boot()
     {
         parent::boot();

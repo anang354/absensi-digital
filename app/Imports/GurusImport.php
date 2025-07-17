@@ -48,6 +48,8 @@ class GurusImport implements ToCollection, WithHeadingRow
                     'alamat'            => $row['alamat'] ?? null,
                     'nik'               => $row['nik'] ?? null,
                     'nip'               => $row['nip'] ?? null,
+                    'jenjang'               => $row['jenjang'] ?? null,
+                    'jabatan'               => $row['jabatan'] ?? null,
                     'user_id'           => $user->id, // Tautkan dengan User yang baru dibuat
                     // Tambahkan kolom lain yang dibutuhkan tabel guru Anda
                 ]);
