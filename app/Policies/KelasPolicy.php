@@ -13,7 +13,7 @@ class KelasPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->isAdmin() || $user->isSuperadmin() || $user->isGuru();
+        return $user->isAdmin() || $user->isSuperadmin();
     }
 
     /**

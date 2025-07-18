@@ -13,7 +13,7 @@ class AbsenGuruPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->isAdmin() || $user->isSuperadmin();
+        return $user->isAdmin() || $user->isSuperadmin() || $user->isKepsek();
     }
 
     /**
@@ -21,7 +21,7 @@ class AbsenGuruPolicy
      */
     public function view(User $user, AbsenGuru $absenGuru): bool
     {
-        return $user->isAdmin() || $user->isSuperadmin();
+        return $user->isAdmin() || $user->isSuperadmin() || $user->isKepsek();
     }
 
     /**

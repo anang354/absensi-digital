@@ -32,7 +32,7 @@ class AbsenDhuha extends Page implements HasTable
 
     public static function canAccess(): bool
     {
-        return auth()->user()->level === 'guru' || auth()->user()->level === 'admin' || auth()->user()->level === 'superadmin';
+        return auth()->user()->level === 'kepsek' || auth()->user()->level === 'guru' || auth()->user()->level === 'admin' || auth()->user()->level === 'superadmin';
     }
 
 

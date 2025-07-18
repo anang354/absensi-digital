@@ -13,7 +13,7 @@ class AbsenSiswaPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->isAdmin() || $user->isSuperadmin() || $user->isGuru();
+        return $user->isAdmin() || $user->isSuperadmin() || $user->isKepsek() || $user->isGuru();
     }
 
     /**
@@ -21,7 +21,7 @@ class AbsenSiswaPolicy
      */
     public function view(User $user, AbsenSiswa $absenSiswa): bool
     {
-        return $user->isAdmin() || $user->isSuperadmin() || $user->isGuru();
+        return $user->isAdmin() || $user->isSuperadmin() || $user->isKepsek() || $user->isGuru();
     }
 
     /**
@@ -29,7 +29,7 @@ class AbsenSiswaPolicy
      */
     public function create(User $user): bool
     {
-        return $user->isAdmin() || $user->isSuperadmin() || $user->isGuru();
+        return $user->isAdmin() || $user->isSuperadmin() || $user->isKepsek() || $user->isGuru();
     }
 
     /**
@@ -37,7 +37,7 @@ class AbsenSiswaPolicy
      */
     public function update(User $user, AbsenSiswa $absenSiswa): bool
     {
-        return $user->isAdmin() || $user->isSuperadmin();
+        return $user->isAdmin() || $user->isSuperadmin() || $user->isKepsek();
     }
 
     /**

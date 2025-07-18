@@ -150,8 +150,19 @@ class AbsenGuruResource extends Resource
             ])
             ->modifyQueryUsing(function (Builder $query): Builder {
                 $semesterId = \App\Models\Semester::where('is_active', true)->value('id');
-                // Tambahkan where clause untuk memfilter berdasarkan semester_id
-                return $query->where('semester_id', $semesterId)->orderByDesc('created_at');
+                $user =  auth()->user();
+
+                if($user->level !== 'kepsek') {
+                    return $query->where('semester_id', $semesterId)->orderByDesc('created_at');
+                } else {
+                    $jenjang = $user->guru->jenjang;
+                    return $query->where('semester_id', $semesterId)
+                    ->whereHas('guru', function($query) use ($jenjang) {
+                        $query->where('jenjang', $jenjang);
+                    })
+                    ->orderByDesc('created_at');
+                }
+                
             });
     }
 

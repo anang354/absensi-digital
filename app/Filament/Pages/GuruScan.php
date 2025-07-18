@@ -25,7 +25,7 @@ class GuruScan extends Page implements HasTable
 
     public static function canAccess(): bool
     {
-        return auth()->user()->level === 'guru' || auth()->user()->level === 'admin';
+        return auth()->user()->level === 'guru' || auth()->user()->level === 'admin' || auth()->user()->level === 'kepsek';
     }
     public function table(Table $table): Table
     {

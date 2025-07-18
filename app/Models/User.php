@@ -18,12 +18,14 @@ class User extends Authenticatable
     const LEVEL_ADMIN = 'admin';
     const LEVEL_GURU = 'guru';
     const LEVEL_SISWA = 'siswa';
+    const LEVEL_KEPSEK = 'kepsek';
 
     const LEVELS = [
         self::LEVEL_SUPERADMIN => 'superadmin',
         self::LEVEL_ADMIN => 'admin',
         self::LEVEL_GURU => 'guru',
         self::LEVEL_SISWA => 'siswa',
+        self::LEVEL_KEPSEK => 'kepsek',
     ];
 
     public function isAdmin() {
@@ -34,6 +36,9 @@ class User extends Authenticatable
     }
     public function isGuru() {
         return $this->level === self::LEVEL_GURU;
+    }
+    public function isKepsek() {
+        return $this->level === self::LEVEL_KEPSEK;
     }
     public function isSiswa() {
         return $this->level === self::LEVEL_SISWA;

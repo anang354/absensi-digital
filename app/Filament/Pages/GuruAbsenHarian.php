@@ -12,6 +12,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Notifications\Notification;
+use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Enums\ActionsPosition;
 use Filament\Tables\Concerns\InteractsWithTable;
@@ -30,26 +31,44 @@ class GuruAbsenHarian extends Page implements HasTable
 
     public static function canAccess(): bool
     {
-        return auth()->user()->level === 'superadmin' || auth()->user()->level === 'admin';
+        return auth()->user()->level === 'kepsek' || auth()->user()->level === 'superadmin' || auth()->user()->level === 'admin';
     }
 
     public function table(Table $table): Table
     {
-        return $table
-        ->query(
-            Guru::query()
+        $user = auth()->user();
+        if($user->level !== 'kepsek') {
+            $query = Guru::query()
                     ->whereDoesntHave('absenGurus', function (Builder $subQuery) {
                         $subQuery->whereDate('tanggal_presensi', Carbon::today());
                     })
-                    ->whereHas('user')
+                    ->whereHas('user');
+        } else {
+            $userJenjang = $user->guru->jenjang;
+            $query = Guru::query()
+                    ->whereDoesntHave('absenGurus', function (Builder $subQuery) {
+                        $subQuery->whereDate('tanggal_presensi', Carbon::today());
+                    })
+                    ->whereHas('user')->where('jenjang', $userJenjang);
+        }
+        return $table
+        ->query(
+            $query
         )
         ->columns([
             TextColumn::make('nip'),
-            TextColumn::make('nama'),
+            TextColumn::make('nama')->searchable(),
             TextColumn::make('jenis_kelamin'),
             TextColumn::make('nomor_handphone'),
+            TextColumn::make('jenjang'),
         ])
-        ->filters([])
+        ->filters([
+            SelectFilter::make('jenjang')
+            ->options([
+                \App\Models\Guru::JENJANG_SEKOLAH
+            ])
+            ->visible(fn () => auth()->user()->level !== 'kepsek'),
+        ])
         ->actions([
             Action::make('Hadir')
             ->color('success')

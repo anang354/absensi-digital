@@ -32,7 +32,7 @@ class DaftarSetoranHafalan extends Page implements HasTable
 
     public static function canAccess(): bool
     {
-        return auth()->user()->level === 'guru' || auth()->user()->level === 'admin' || auth()->user()->level === 'superadmin';
+        return auth()->user()->level !== 'siswa';
     }
 
     protected function getSemester()

@@ -33,7 +33,7 @@ class SetorHafalan extends Page implements HasForms
 
     public static function canAccess(): bool
     {
-        return auth()->user()->level === 'guru' || auth()->user()->level === 'admin' || auth()->user()->level === 'superadmin';
+        return auth()->user()->level !== 'siswa';
     }
 
     public function form(Form $form): Form
