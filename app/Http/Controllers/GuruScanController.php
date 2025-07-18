@@ -19,6 +19,8 @@ class GuruScanController extends Controller
         // "1.1667241","104.018855"
         $semesterId = \App\Models\Semester::where('is_active', true)->value('id');
         $guruId = auth()->user()->guru->id;
+        $guruNama = auth()->user()->guru->nama;
+        $phoneNumber = auth()->user()->guru->nomor_handphone;
         $tanggal_presensi = date('Y-m-d');
         $cekPresensi = AbsenGuru::where('guru_id', $guruId)->where('tanggal_presensi', $tanggal_presensi)->count();      
         $lokasi = $request->lokasi;
@@ -58,6 +60,7 @@ class GuruScanController extends Controller
                 $absenGuru->save();
                 Storage::put($file, $image_base64);
                 echo "success|Selamat bekerja :)|in";
+                return $phoneNumber !== null  ? $this->sendWhatsapp($guruNama, $isStatus, $phoneNumber) : 'Nomor Hp belum diatur';
                 //$simpan = DB::table('absen_gurus')->insert($data);
             } catch(Exception $e) {
                 echo "error|Maaf gagal absen, hubungi tim IT|in";
@@ -71,6 +74,7 @@ class GuruScanController extends Controller
             $getAbsen->save();
             Storage::put($file, $image_base64);
             echo "success|Terimakasih, Hati-hati dijalan :)|out";
+            return $phoneNumber !== null  ? $this->sendWhatsapp($guruNama,  $isStatus, $phoneNumber) : 'Nomor Hp belum diatur';
             } catch(Exception $e) {
                 echo "error|Maaf gagal absen, hubungi tim IT|out";
             }
@@ -93,5 +97,84 @@ class GuruScanController extends Controller
         $kilometers = $miles * 1.609344;
         $meters = $kilometers * 1000;
         return compact('meters');
+    }
+
+    function sendWhatsapp($namaGuru, $status, $phoneNumber)
+    {
+        $token = \App\Models\Pengaturan::first()->value('token_whatsapp');
+        $user = \App\Models\User::whereIn('level', ['superadmin', 'admin'])->get();
+
+        if($token === null) { return; }
+
+        $fonnteApiUrl = 'https://api.fonnte.com/send'; // URL ini bisa berubah, cek dokumentasi FonNte terbaru
+        
+        $message = strtoupper($status)."!\n";
+        $message .= "\n"; // Baris kosong untuk spasi
+        $message .= "Nama  : " . $namaGuru . ".\n"; // Baris baru setelah nama siswa
+        $message .= "Telah melakukan presensi hari ini:\n"; // Baris baru
+        $message .= "- Tanggal: " . date('l, d M Y') . "\n"; // Baris baru
+        $message .= "- Waktu: " .  date('H:i:s') . "\n"; // Baris baru
+        $message .= "\n"; // Baris kosong untuk spasi
+        $message .= "\n *_Pesan otomatis tidak perlu dibalas._";
+        
+        try {
+            // Inisialisasi sesi cURL
+            $ch = curl_init();
+
+            // Set URL dan opsi cURL
+            curl_setopt($ch, CURLOPT_URL, $fonnteApiUrl);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); // Mengembalikan transfer sebagai string daripada output langsung
+            curl_setopt($ch, CURLOPT_POST, true); // Mengatur metode request ke POST
+            curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query([ // Membangun query string dari array data
+                'target' => $phoneNumber,
+                'message' => $message,
+            ]));
+            curl_setopt($ch, CURLOPT_HTTPHEADER, [ // Menambahkan header Authorization
+                'Authorization: ' . $token,
+            ]);
+
+            // Eksekusi sesi cURL dan dapatkan respons
+            $response = curl_exec($ch);
+
+            // Periksa jika ada error cURL
+            if (curl_errno($ch)) {
+                $error_msg = curl_error($ch);
+                curl_close($ch);
+                Notification::make()
+                    ->title('Kesalahan Pengiriman Whatsapp')
+                    ->danger()
+                    ->body($error_msg)
+                    ->sendToDatabase($user);
+            }
+
+            // Dapatkan informasi HTTP status code
+            $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+            // Tutup sesi cURL
+            curl_close($ch);
+
+            $responseData = json_decode($response, true);
+
+            if ($http_code >= 200 && $http_code < 300) {
+                // Berhasil mengirim pesan (status code 2xx)
+               return;
+                
+            } else {
+                // Gagal mengirim pesan
+                Notification::make()
+                    ->title('Kesalahan Pengiriman Whatsapp')
+                    ->danger()
+                    ->body($responseData)
+                    ->sendToDatabase($user);
+            }
+
+        } catch (\Exception $e) {
+            // Tangani error jika terjadi masalah koneksi atau lainnya
+            Notification::make()
+                    ->title('Kesalahan Pengiriman Whatsapp')
+                    ->danger()
+                    ->body($e->getMessage())
+                    ->sendToDatabase($user);
+        }
     }
 }

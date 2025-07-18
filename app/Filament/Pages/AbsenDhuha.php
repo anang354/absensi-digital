@@ -53,7 +53,7 @@ class AbsenDhuha extends Page implements HasTable
             TextColumn::make('nama')->searchable(),
             TextColumn::make('kelas.nama_kelas'),
             TextColumn::make('jenis_kelamin')->toggleable(isToggledHiddenByDefault: true),
-            TextColumn::make('nomor_hp'),
+            TextColumn::make('nomor_hp')->toggleable(isToggledHiddenByDefault: true),
             TextColumn::make('wali'),
         ])
         ->filters([
