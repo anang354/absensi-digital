@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Tables;
 use Filament\Forms\Form;
@@ -138,7 +139,32 @@ class AbsenGuruResource extends Resource
                         'izin' => 'Izin',
                         'sakit' => 'Sakit',
                         'alpha' => 'Alpha',
+                    ]),
+                SelectFilter::make('bulan') // Nama internal filter
+                    ->options([
+                        'this_month' => 'Bulan Ini',
+                        'last_month' => 'Bulan Lalu',
                     ])
+                    ->default('this_month') // Defaultkan ke 'Bulan Ini'
+                    ->query(function (Builder $query, array $data): Builder {
+                        // Ambil bulan dan tahun saat ini
+                        $currentMonth = Carbon::now()->month;
+                        $currentYear = Carbon::now()->year;
+
+                        if (isset($data['value'])) {
+                            if ($data['value'] === 'this_month') {
+                                return $query->whereMonth('tanggal_presensi', $currentMonth)
+                                             ->whereYear('tanggal_presensi', $currentYear);
+                            } elseif ($data['value'] === 'last_month') {
+                                $lastMonth = Carbon::now()->subMonth(); // Ambil bulan sebelumnya
+                                return $query->whereMonth('tanggal_presensi', $lastMonth->month)
+                                             ->whereYear('tanggal_presensi', $lastMonth->year);
+                            }
+                        }
+                        // Jika tidak ada filter yang dipilih (atau default), tetap tampilkan bulan ini
+                        return $query->whereMonth('tanggal_presensi', $currentMonth)
+                                     ->whereYear('tanggal_presensi', $currentYear);
+                    }),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make()->slideOver()->color('info'),

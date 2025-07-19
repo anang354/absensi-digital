@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\AbsenSiswaResource\Pages;
 
+use Carbon\Carbon;
 use Filament\Actions;
 use App\Models\AbsenSiswa;
 use Filament\Resources\Components\Tab;
@@ -13,16 +14,22 @@ class ListAbsenSiswas extends ListRecords
 {
     protected static string $resource = AbsenSiswaResource::class;
 
-    protected ?string $subheading = 'Data yang ditampilkan adalah berdasarkan semester yang sedang aktif.';
+    protected ?string $subheading = 'Data yang ditampilkan adalah satu minggu terakhir.';
 
     public function getTabs(): array
     {
         $semesterId = \App\Models\Semester::where('is_active', true)->value('id');
+        $tanggalMulai = Carbon::today()->subDays(6);
+        $tanggalAkhir = Carbon::today()->endOfDay();
         return [
             AbsenSiswa::ABSEN_DHUHA => Tab::make()
-                ->modifyQueryUsing(fn (Builder $query) => $query->where('tipe_absen', AbsenSiswa::ABSEN_DHUHA)->where('semester_id', $semesterId)->orderByDesc('created_at')),
+                ->modifyQueryUsing(fn (Builder $query) => $query->where('tipe_absen', AbsenSiswa::ABSEN_DHUHA)->where('semester_id', $semesterId)
+                ->whereBetween('tanggal', [$tanggalMulai, $tanggalAkhir])
+                ->orderByDesc('created_at')),
             AbsenSiswa::ABSEN_ASHAR => Tab::make()
-                ->modifyQueryUsing(fn (Builder $query) => $query->where('tipe_absen', AbsenSiswa::ABSEN_ASHAR)->where('semester_id', $semesterId)->orderByDesc('created_at')),
+                ->modifyQueryUsing(fn (Builder $query) => $query->where('tipe_absen', AbsenSiswa::ABSEN_ASHAR)->where('semester_id', $semesterId)
+                ->whereBetween('tanggal', [$tanggalMulai, $tanggalAkhir])
+                ->orderByDesc('created_at')),
         ];
     }
     public function getDefaultActiveTab(): string | int | null
