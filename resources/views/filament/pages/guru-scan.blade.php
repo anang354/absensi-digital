@@ -64,7 +64,7 @@
         </div>
 
         <div class="data-absen">
-            <p>{{ Carbon\Carbon::now()->format('l, m F Y') }}</p>
+            <p>{{ Carbon\Carbon::now()->format('l, d F Y') }}</p>
             <p id="waktu"></p>
         </div>
         <x-filament::fieldset>
