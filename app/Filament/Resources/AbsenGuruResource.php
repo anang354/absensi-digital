@@ -118,7 +118,19 @@ class AbsenGuruResource extends Resource
             ->columns([
                 TextColumn::make('guru.nama')->searchable(),
                 TextColumn::make('tanggal_presensi'),
-                TextColumn::make('checkin'),
+                TextColumn::make('checkin')
+                ->color(function (AbsenGuru $record) {
+                        // Jika ada absen dan checkin, periksa apakah terlambat
+                        if ($record->checkin) {
+                            $checkinTime = Carbon::parse($record->checkin);
+                            $batasWaktu = Carbon::parse('07:30');
+
+                            if ($checkinTime->greaterThan($batasWaktu)) {
+                                return 'danger'; // Merah jika lewat dari 07:30
+                            }
+                        }
+                        return 'default'; // Warna default jika tepat waktu atau tidak ada data
+                    }),
                 TextColumn::make('checkout'),
                 TextColumn::make('status')
                 ->badge()
