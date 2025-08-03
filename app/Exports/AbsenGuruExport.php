@@ -26,7 +26,6 @@ class AbsenGuruExport implements FromArray, WithHeadings, WithEvents
 
     public function array(): array
     {
-        $jenjang = auth()->user()->guru->jenjang;
 
         $rows = [];
         if(auth()->user()->level !== 'kepsek') {
@@ -34,6 +33,7 @@ class AbsenGuruExport implements FromArray, WithHeadings, WithEvents
                 $query->whereBetween('tanggal_presensi', [$this->startDate, $this->endDate]);
             }])->get();
         } else {
+            $jenjang = auth()->user()->guru->jenjang;
             $gurus = Guru::with(['absenGurus' => function ($query) {
                 $query->whereBetween('tanggal_presensi', [$this->startDate, $this->endDate]);
             }])->where('jenjang', $jenjang)->get();
