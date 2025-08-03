@@ -17,12 +17,22 @@ class AbsenAsharChartWidget extends ChartWidget
 
     protected function getData(): array
     {
-         
-        $todayAttendance = AbsenSiswa::query()
-            ->select('status')
-            ->whereDate('tanggal', date('Y-m-d'))
-            ->where('tipe_absen', 'ashar')
-            ->get();
+        if(auth()->user()->level === 'admin' || auth()->user()->level === 'superadmin') {
+            $todayAttendance = AbsenSiswa::query()
+                ->select('status')
+                ->whereDate('tanggal', date('Y-m-d'))
+                ->where('tipe_absen', 'ashar')
+                ->get();
+        } else {
+            $todayAttendance = AbsenSiswa::query()
+                ->select('status')
+                ->whereDate('tanggal', date('Y-m-d'))
+                ->where('tipe_absen', 'ashar')
+                ->whereHas('siswa.kelas', function (Builder $query) {
+                    $query->where('jenjang', auth()->user()->guru->jenjang);
+                })
+                ->get();
+        }
         //dd($todayAttendance);
          // Mengelompokkan dan menghitung jumlah setiap tipe
         $attendanceCounts = $todayAttendance->countBy('status');

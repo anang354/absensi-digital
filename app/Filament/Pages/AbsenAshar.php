@@ -68,6 +68,13 @@ class AbsenAshar extends Page implements HasTable
             TextColumn::make('nomor_hp')->toggleable(isToggledHiddenByDefault: true),
             TextColumn::make('wali'),
         ])
+        ->headerActions([
+            Action::make('laporan-ashar')
+            ->label('Laporan Sholat Ashar')
+            ->url('/admin/laporan-ashar-siswa')
+            ->color('success')
+            ->icon('heroicon-o-document'),
+        ])
         ->filters([
             SelectFilter::make('kelas_id')
                     ->label('Filter Berdasarkan Kelas')

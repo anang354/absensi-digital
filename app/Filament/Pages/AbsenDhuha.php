@@ -70,6 +70,13 @@ class AbsenDhuha extends Page implements HasTable
             TextColumn::make('nomor_hp')->toggleable(isToggledHiddenByDefault: true),
             TextColumn::make('wali'),
         ])
+        ->headerActions([
+            Action::make('laporan-dhuha')
+            ->label('Laporan Sholat Dhuha')
+            ->url('/admin/laporan-dhuha-siswa')
+            ->color('success')
+            ->icon('heroicon-o-document'),
+        ])
         ->filters([
             SelectFilter::make('kelas_id')
                     ->label('Filter Berdasarkan Kelas')
