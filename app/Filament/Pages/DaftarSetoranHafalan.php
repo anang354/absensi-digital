@@ -42,9 +42,19 @@ class DaftarSetoranHafalan extends Page implements HasTable
 
     public function table(Table $table): Table
     {
+        if(auth()->user()->level === 'admin' || auth()->user()->level === 'superadmin')
+        {
+            $queryHafalan = SetorHafalan::query()->where('semester_id', $this->getSemester());
+        } else {
+            $queryHafalan = SetorHafalan::query()
+            ->where('semester_id', $this->getSemester())
+            ->whereHas('siswa.kelas', function (Builder $query) {
+                $query->where('jenjang', auth()->user()->guru->jenjang);
+            });
+        }
         return $table
             ->query(
-                SetorHafalan::query()->where('semester_id', $this->getSemester())
+                $queryHafalan
             )
             ->columns([
                 TextColumn::make('siswa.nama')->searchable(),
@@ -84,14 +94,25 @@ class DaftarSetoranHafalan extends Page implements HasTable
                         $record->update($data);
                     }),
             ])
+            ->actions([
+                \Filament\Tables\Actions\DeleteAction::make()
+                    ->visible(fn(SetorHafalan $record) => auth()->user()->id === $record->user_id),
+            ])
+            ->bulkActions([
+                \Filament\Tables\Actions\BulkActionGroup::make([
+                    \Filament\Tables\Actions\DeleteBulkAction::make()
+                    ->visible(
+                        function() {
+                            return auth()->user()->level === 'admin' || auth()->user()->level === 'superadmin';
+                        }
+                    ),
+                ]),
+            ])
             ->filters([
                 SelectFilter::make('kelas')
                     ->relationship('siswa.kelas', 'nama_kelas') // Ini adalah kuncinya!
                     ->label('Filter Berdasarkan Kelas')
-                    ->placeholder('Pilih Kelas')
-                    ->options(
-                        \App\Models\Kelas::pluck('nama_kelas', 'id')->toArray()
-                    ),
+                    ->placeholder('Pilih Kelas'),
             ]);
     }
 }
