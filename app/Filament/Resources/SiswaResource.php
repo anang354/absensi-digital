@@ -95,6 +95,14 @@ class SiswaResource extends Resource
                 ->copyMessage('Nip copied'),
                 TextColumn::make('nama')->searchable(),
                 TextColumn::make('kelas.nama_kelas'),
+                TextColumn::make('kelas.jenjang')
+                ->label('Jenjang')
+                ->badge()
+                ->visible(fn() => auth()->user()->level === 'admin' || auth()->user()->level === 'superadmin')
+                ->color(fn (string $state): string => match ($state) {
+                    'smp' => 'success',
+                    'smk' => 'info'
+                }),
                 TextColumn::make('jenis_kelamin'),
                 TextColumn::make('nomor_hp'),
                 TextColumn::make('wali')->toggleable()->searchable(),

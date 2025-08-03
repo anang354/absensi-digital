@@ -8,6 +8,7 @@ use App\Models\Kelas;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
+use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
@@ -27,15 +28,31 @@ class KelasResource extends Resource
         return $form
             ->schema([
                 TextInput::make('nama_kelas')->required(),
+                Radio::make('jenjang')
+                ->options(Kelas::JENJANG_SEKOLAH)
+                ->live()
+                ->afterStateUpdated(fn (Forms\Set $set) => $set('level_kelas', null)),
                 Select::make('level_kelas')->required()
-                ->options([
-                    '7' => '7',
-                    '8' => '8',
-                    '9' => '9',
-                    '10' => '10',
-                    '11' => '11',
-                    '12' => '12',
-                ]),
+                ->options(function (Forms\Get $get): array { // Menggunakan closure untuk opsi
+                            $jenjang = $get('jenjang'); // Mengambil nilai jenjang pendidikan yang dipilih
+
+                            // Logika untuk menentukan opsi kelas berdasarkan jenjang
+                            if ($jenjang === Kelas::JENJANG_SMP) {
+                                return [
+                                    '7' => 'Kelas 7',
+                                    '8' => 'Kelas 8',
+                                    '9' => 'Kelas 9',
+                                ];
+                            } elseif ($jenjang === Kelas::JENJANG_SMK) {
+                                return [
+                                    '10' => 'Kelas 10',
+                                    '11' => 'Kelas 11',
+                                    '12' => 'Kelas 12',
+                                ];
+                            }
+                            // Kembalikan array kosong jika jenjang belum dipilih atau tidak cocok
+                            return [];
+                        }),
             ]);
     }
 
@@ -46,6 +63,7 @@ class KelasResource extends Resource
                 TextColumn::make('id')->label('kelas_id')->color('danger'),
                 TextColumn::make('nama_kelas'),
                 TextColumn::make('level_kelas'),
+                TextColumn::make('jenjang'),
                 TextColumn::make('siswas_count') // Ini adalah kuncinya!
                     ->label('Jumlah Siswa')
                     ->counts('siswas')

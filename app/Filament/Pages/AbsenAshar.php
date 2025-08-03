@@ -4,6 +4,7 @@ namespace App\Filament\Pages;
 
 use Carbon\Carbon;
 use App\Models\Siswa;
+use App\Models\Kelas;
 use Filament\Pages\Page;
 use App\Models\AbsenSiswa;
 use Filament\Tables\Table;
@@ -37,17 +38,30 @@ class AbsenAshar extends Page implements HasTable
 
     public function table(Table $table): Table
     {
-        return $table
-        ->query(
-            Siswa::query()
+        if(auth()->user()->level === 'guru' || auth()->user()->level === 'kepsek') {
+            $queryAbsen = Siswa::query()
                     ->whereDoesntHave('absenSiswa', function (Builder $subQuery) {
                         $subQuery->whereDate('tanggal', Carbon::today());
                         $subQuery->where('tipe_absen', AbsenSiswa::ABSEN_ASHAR);
                     })
                     ->whereHas('user')
+                    ->whereHas('kelas', function (Builder $query) {
+                        $query->where('jenjang', auth()->user()->guru->jenjang);
+                    });
+        } else {
+            $queryAbsen = Siswa::query()
+                    ->whereDoesntHave('absenSiswa', function (Builder $subQuery) {
+                        $subQuery->whereDate('tanggal', Carbon::today());
+                        $subQuery->where('tipe_absen', AbsenSiswa::ABSEN_ASHAR);
+                    })
+                    ->whereHas('user');
+        }
+        return $table
+        ->query(
+            $queryAbsen
         )
         ->columns([
-            TextColumn::make('nisn'),
+            TextColumn::make('nisn')->toggleable(isToggledHiddenByDefault: true),
             TextColumn::make('nama')->searchable(),
             TextColumn::make('kelas.nama_kelas'),
             TextColumn::make('jenis_kelamin')->toggleable(isToggledHiddenByDefault: true),
@@ -55,13 +69,43 @@ class AbsenAshar extends Page implements HasTable
             TextColumn::make('wali'),
         ])
         ->filters([
-            SelectFilter::make('kelas')
-                    ->relationship('kelas', 'nama_kelas') // Ini adalah kuncinya!
+            SelectFilter::make('kelas_id')
                     ->label('Filter Berdasarkan Kelas')
                     ->placeholder('Pilih Kelas')
                     ->options(
-                        \App\Models\Kelas::pluck('nama_kelas', 'id')->toArray()
+                       function (): array { // <<< INI KUNCI UTAMA >>>
+                    // Mendapatkan user yang sedang login
+                    $user = auth()->user();
+
+                    // Kondisi 1: Jika user adalah 'admin' atau 'super_admin'
+                    if ($user->level === 'admin' || $user->level === 'superadmin') {
+                        // Tampilkan semua kelas
+                        return Kelas::pluck('nama_kelas', 'id')->toArray();
+                    }
+
+                    // Kondisi 2: Jika user adalah 'guru' atau 'kepsek'
+                    // Asumsi: user memiliki relasi hasOne ke model Guru
+                    // Asumsi: model Guru memiliki kolom 'jenjang'
+                    if ($user->level === 'guru' || $user->level === 'kepsek') {
+                        $jenjangGuru = $user->guru->jenjang; // Ambil jenjang guru yang sedang login
+                        
+                        // Tampilkan kelas yang sesuai dengan jenjang guru tersebut
+                        return Kelas::where('jenjang', $jenjangGuru)
+                                     ->pluck('nama_kelas', 'id')
+                                     ->toArray();
+                    }
+                    
+                    // Kondisi fallback: Jika user tidak memiliki peran yang relevan, kembalikan array kosong
+                    return [];
+                }
                     ),
+            // SelectFilter::make('kelas')
+            //         ->relationship('kelas', 'nama_kelas') // Ini adalah kuncinya!
+            //         ->label('Filter Berdasarkan Kelas')
+            //         ->placeholder('Pilih Kelas')
+            //         ->options(
+            //             \App\Models\Kelas::pluck('nama_kelas', 'id')->toArray()
+            //         ),
         ])
         ->actions([
             Action::make('Hadir')

@@ -21,16 +21,31 @@ class ListAbsenSiswas extends ListRecords
         $semesterId = \App\Models\Semester::where('is_active', true)->value('id');
         $tanggalMulai = Carbon::today()->subDays(6);
         $tanggalAkhir = Carbon::today()->endOfDay();
-        return [
-            AbsenSiswa::ABSEN_DHUHA => Tab::make()
-                ->modifyQueryUsing(fn (Builder $query) => $query->where('tipe_absen', AbsenSiswa::ABSEN_DHUHA)->where('semester_id', $semesterId)
-                ->whereBetween('tanggal', [$tanggalMulai, $tanggalAkhir])
-                ->orderByDesc('created_at')),
-            AbsenSiswa::ABSEN_ASHAR => Tab::make()
-                ->modifyQueryUsing(fn (Builder $query) => $query->where('tipe_absen', AbsenSiswa::ABSEN_ASHAR)->where('semester_id', $semesterId)
-                ->whereBetween('tanggal', [$tanggalMulai, $tanggalAkhir])
-                ->orderByDesc('created_at')),
-        ];
+        if(auth()->user()->level == 'guru' || auth()->user()->level == 'kepsek'){
+            return [
+                        AbsenSiswa::ABSEN_DHUHA => Tab::make()
+                            ->modifyQueryUsing(fn (Builder $query) => $query->where('tipe_absen', AbsenSiswa::ABSEN_DHUHA)->where('semester_id', $semesterId)
+                            ->whereBetween('tanggal', [$tanggalMulai, $tanggalAkhir])
+                            ->whereHas('siswa.kelas', fn ($q) => $q->where('jenjang', auth()->user()->guru->jenjang))
+                            ->orderByDesc('created_at')),
+                        AbsenSiswa::ABSEN_ASHAR => Tab::make()
+                            ->modifyQueryUsing(fn (Builder $query) => $query->where('tipe_absen', AbsenSiswa::ABSEN_ASHAR)->where('semester_id', $semesterId)
+                            ->whereBetween('tanggal', [$tanggalMulai, $tanggalAkhir])
+                            ->whereHas('siswa.kelas', fn ($q) => $q->where('jenjang', auth()->user()->guru->jenjang))
+                            ->orderByDesc('created_at')),
+                    ];
+        } else {
+            return [
+                AbsenSiswa::ABSEN_DHUHA => Tab::make()
+                    ->modifyQueryUsing(fn (Builder $query) => $query->where('tipe_absen', AbsenSiswa::ABSEN_DHUHA)->where('semester_id', $semesterId)
+                    ->whereBetween('tanggal', [$tanggalMulai, $tanggalAkhir])
+                    ->orderByDesc('created_at')),
+                AbsenSiswa::ABSEN_ASHAR => Tab::make()
+                    ->modifyQueryUsing(fn (Builder $query) => $query->where('tipe_absen', AbsenSiswa::ABSEN_ASHAR)->where('semester_id', $semesterId)
+                    ->whereBetween('tanggal', [$tanggalMulai, $tanggalAkhir])
+                    ->orderByDesc('created_at')),
+            ];
+        }
     }
     public function getDefaultActiveTab(): string | int | null
     {
@@ -39,7 +54,7 @@ class ListAbsenSiswas extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            // Actions\CreateAction::make(),
         ];
     }
 }

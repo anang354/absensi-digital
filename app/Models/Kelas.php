@@ -13,4 +13,11 @@ class Kelas extends Model
     {
         return $this->hasMany(Siswa::class);
     }
+
+    const JENJANG_SMP = 'smp';
+    const JENJANG_SMK = 'smk';
+    const JENJANG_SEKOLAH = [
+        self::JENJANG_SMP => 'SMP',
+        self::JENJANG_SMK => 'SMK',
+    ];
 }
