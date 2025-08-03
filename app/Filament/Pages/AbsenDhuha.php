@@ -63,7 +63,7 @@ class AbsenDhuha extends Page implements HasTable
             $queryAbsen
         )
         ->columns([
-            TextColumn::make('nisn'),
+            TextColumn::make('nisn')->toggleable(isToggledHiddenByDefault: true),
             TextColumn::make('nama')->searchable(),
             TextColumn::make('kelas.nama_kelas'),
             TextColumn::make('jenis_kelamin')->toggleable(isToggledHiddenByDefault: true),
