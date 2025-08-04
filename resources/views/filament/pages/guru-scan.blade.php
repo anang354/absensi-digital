@@ -45,13 +45,15 @@
         <div class="button-camera">
             @php
                 $checking = \App\Models\AbsenGuru::where('guru_id', auth()->user()->guru->id)->where('tanggal_presensi', date('Y-m-d'))->get();
+                $jamSaatIni = Carbon\Carbon::now()->format('H:i');
+                $batasAbsenPulang = '13:00';
             @endphp
                 @if($checking->count() > 0)
                     @if($checking[0]->checkin !== null && $checking[0]->checkout !== null)
                         <x-filament::badge icon="heroicon-m-sparkles" color="info">
                             Anda Sudah Absen Hari Ini
                         </x-filament::badge>
-                    @else
+                    @elseif($jamSaatIni > $batasAbsenPulang)
                         <x-filament::button icon="heroicon-o-camera" color="danger" id="take_absen">
                         Absen Pulang
                         </x-filament::button>
