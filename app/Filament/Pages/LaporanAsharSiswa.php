@@ -70,33 +70,7 @@ class LaporanAsharSiswa extends Page implements HasTable
         ])
         ->filters([
             SelectFilter::make('kelas')
-            ->options(
-                    function (): array { // <<< INI KUNCI UTAMA >>>
-                    // Mendapatkan user yang sedang login
-                    $user = auth()->user();
-
-                    // Kondisi 1: Jika user adalah 'admin' atau 'super_admin'
-                    if ($user->level === 'admin' || $user->level === 'superadmin') {
-                        // Tampilkan semua kelas
-                        return Kelas::pluck('nama_kelas', 'id')->toArray();
-                    }
-
-                    // Kondisi 2: Jika user adalah 'guru' atau 'kepsek'
-                    // Asumsi: user memiliki relasi hasOne ke model Guru
-                    // Asumsi: model Guru memiliki kolom 'jenjang'
-                    if ($user->level === 'guru' || $user->level === 'kepsek') {
-                        $jenjangGuru = $user->guru->jenjang; // Ambil jenjang guru yang sedang login
-                        
-                        // Tampilkan kelas yang sesuai dengan jenjang guru tersebut
-                        return Kelas::where('jenjang', $jenjangGuru)
-                                     ->pluck('nama_kelas', 'id')
-                                     ->toArray();
-                    }
-                    
-                    // Kondisi fallback: Jika user tidak memiliki peran yang relevan, kembalikan array kosong
-                    return [];
-                }
-                    )
+            ->relationship('kelas', 'nama_kelas')
         ])
         ->actions([]);
     }
