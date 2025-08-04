@@ -250,7 +250,7 @@ class AbsenAshar extends Page implements HasTable
             $message .= "Putra/putri Anda telah melakukan presensi hari ini:\n"; // Baris baru
             $message .= "- Tanggal: " . date('l, d M Y') . "\n"; // Baris baru
             $message .= "- Waktu: " .  date('H:i:s') . "\n"; // Baris baru
-            $message .= "- Sholat: Dhuha \n"; // Baris baru
+            $message .= "- Sholat: Ashar \n"; // Baris baru
             $message .= "\n"; // Baris kosong untuk spasi
             $message .= "Terima kasih atas perhatiannya.\n";
             $message .= "\n *_Pesan otomatis tidak perlu dibalas._";
@@ -259,7 +259,7 @@ class AbsenAshar extends Page implements HasTable
             $message .= "Bapak/Ibu wali murid dari " . $namaSiswa . ".\n"; // Baris baru setelah nama siswa
             $message .= "Putra/putri Anda tidak melakukan presensi hari ini:\n"; // Baris baru
             $message .= "- Ketarangan: " . $status . "\n"; // Baris baru
-            $message .= "- Sholat: Dhuha  \n"; // Baris baru
+            $message .= "- Sholat: Ashar  \n"; // Baris baru
             $message .= "\n"; // Baris kosong untuk spasi
             $message .= "Terima kasih atas perhatiannya.\n";
             $message .= "\n *_Pesan otomatis tidak perlu dibalas._";
