@@ -17,6 +17,7 @@ class GuruScanController extends Controller
         //$lokasiKantor = [$pengaturan->latitude, $pengaturan->longitude];
         //1.166753, 104.018848
         // "1.1667241","104.018855"
+        $batasPulang = '13:00:00';
         $semesterId = \App\Models\Semester::where('is_active', true)->value('id');
         $guruId = auth()->user()->guru->id;
         $guruNama = auth()->user()->guru->nama;
@@ -66,15 +67,19 @@ class GuruScanController extends Controller
                 echo "error|Maaf gagal absen, hubungi tim IT|in";
             }
         } else {
+            if($jam < $batasPulang) {
+                echo "error|Error, Belum waktunya pulang!|out";
+                return;
+            }
             try {
-            $getAbsen = AbsenGuru::where('guru_id', $guruId)->where('tanggal_presensi', $tanggal_presensi)->first();
-            $getAbsen->checkout = $jam;
-            $getAbsen->lokasi_out = $lokasi;
-            $getAbsen->foto_out = 'uploads/absensi/'.$fileName;
-            $getAbsen->save();
-            Storage::put($file, $image_base64);
-            echo "success|Terimakasih, Hati-hati dijalan :)|out";
-            return $phoneNumber !== null  ? $this->sendWhatsapp($guruNama,  $isStatus, $phoneNumber) : 'Nomor Hp belum diatur';
+                $getAbsen = AbsenGuru::where('guru_id', $guruId)->where('tanggal_presensi', $tanggal_presensi)->first();
+                $getAbsen->checkout = $jam;
+                $getAbsen->lokasi_out = $lokasi;
+                $getAbsen->foto_out = 'uploads/absensi/'.$fileName;
+                $getAbsen->save();
+                Storage::put($file, $image_base64);
+                echo "success|Terimakasih, Hati-hati dijalan :)|out";
+                return $phoneNumber !== null  ? $this->sendWhatsapp($guruNama,  $isStatus, $phoneNumber) : 'Nomor Hp belum diatur';
             } catch(Exception $e) {
                 echo "error|Maaf gagal absen, hubungi tim IT|out";
             }
