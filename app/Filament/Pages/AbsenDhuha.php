@@ -242,6 +242,10 @@ class AbsenDhuha extends Page implements HasTable
     {
         $token = \App\Models\Pengaturan::first()->value('token_whatsapp');
         $user = \App\Models\User::whereIn('level', ['superadmin', 'admin'])->get();
+        
+        $counter = cache()->get('fonnte_scan_counter', 0);
+        // Hitung delay berdasarkan counter
+        $delaySeconds = 15 * $counter;
 
         if($token === null) { return; }
 
@@ -268,6 +272,10 @@ class AbsenDhuha extends Page implements HasTable
         }
         try {
             // Inisialisasi sesi cURL
+
+            $nextCounter = $counter + 1;
+            // Simpan kembali ke cache, expired otomatis jika tidak scan dalam 5 menit
+            cache()->put('fonnte_scan_counter', $nextCounter, now()->addMinutes(10));
             $ch = curl_init();
 
             // Set URL dan opsi cURL
@@ -277,6 +285,7 @@ class AbsenDhuha extends Page implements HasTable
             curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query([ // Membangun query string dari array data
                 'target' => $phoneNumber,
                 'message' => $message,
+                'delay' => $delaySeconds,
             ]));
             curl_setopt($ch, CURLOPT_HTTPHEADER, [ // Menambahkan header Authorization
                 'Authorization: ' . $token,
