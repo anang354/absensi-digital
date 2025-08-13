@@ -46,7 +46,7 @@
             @php
                 $checking = \App\Models\AbsenGuru::where('guru_id', auth()->user()->guru->id)->where('tanggal_presensi', date('Y-m-d'))->get();
                 $jamSaatIni = Carbon\Carbon::now()->format('H:i');
-                $batasAbsenPulang = '13:00';
+                $batasAbsenPulang = '11:30';
             @endphp
                 @if($checking->count() > 0)
                     @if($checking[0]->checkin !== null && $checking[0]->checkout !== null)

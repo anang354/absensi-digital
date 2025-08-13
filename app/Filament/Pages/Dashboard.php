@@ -47,10 +47,7 @@ class Dashboard extends \Filament\Pages\Dashboard
         if(auth()->user()->level === "siswa") {
             return $form->schema([
                Section::make('')->schema([
-                 Select::make('absensi')->options([
-                    'dhuha' => 'Dhuha',
-                    'ashar' => 'Ashar'
-                ]),
+                 Select::make('absensi')->options(\App\Models\AbsenSiswa::TIPE_ABSEN),
                 DatePicker::make('tanggal_awal'),
                 DatePicker::make('tanggal_akhir'),
                ])->columns(3)

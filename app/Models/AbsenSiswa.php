@@ -11,9 +11,11 @@ class AbsenSiswa extends Model
 
     const ABSEN_DHUHA = 'dhuha';
     const ABSEN_ASHAR = 'ashar';
+    const ABSEN_DZUHUR = 'dzuhur';
 
     const TIPE_ABSEN = [
         self::ABSEN_DHUHA => 'Dhuha',
+        self::ABSEN_DZUHUR => 'Dzuhur',
         self::ABSEN_ASHAR => 'Ashar',
     ];
 

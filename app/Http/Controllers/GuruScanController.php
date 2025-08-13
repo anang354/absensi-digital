@@ -17,7 +17,7 @@ class GuruScanController extends Controller
         //$lokasiKantor = [$pengaturan->latitude, $pengaturan->longitude];
         //1.166753, 104.018848
         // "1.1667241","104.018855"
-        $batasPulang = '13:00:00';
+        $batasPulang = '11:30:00';
         $semesterId = \App\Models\Semester::where('is_active', true)->value('id');
         $guruId = auth()->user()->guru->id;
         $guruNama = auth()->user()->guru->nama;

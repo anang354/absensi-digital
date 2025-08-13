@@ -33,6 +33,11 @@ class ListAbsenSiswas extends ListRecords
                             ->whereBetween('tanggal', [$tanggalMulai, $tanggalAkhir])
                             ->whereHas('siswa.kelas', fn ($q) => $q->where('jenjang', auth()->user()->guru->jenjang))
                             ->orderByDesc('created_at')),
+                        AbsenSiswa::ABSEN_DZUHUR => Tab::make()
+                            ->modifyQueryUsing(fn (Builder $query) => $query->where('tipe_absen', AbsenSiswa::ABSEN_DZUHUR)->where('semester_id', $semesterId)
+                            ->whereBetween('tanggal', [$tanggalMulai, $tanggalAkhir])
+                            ->whereHas('siswa.kelas', fn ($q) => $q->where('jenjang', auth()->user()->guru->jenjang))
+                            ->orderByDesc('created_at')),
                         AbsenSiswa::ABSEN_ASHAR => Tab::make()
                             ->modifyQueryUsing(fn (Builder $query) => $query->where('tipe_absen', AbsenSiswa::ABSEN_ASHAR)->where('semester_id', $semesterId)
                             ->whereBetween('tanggal', [$tanggalMulai, $tanggalAkhir])
@@ -43,6 +48,10 @@ class ListAbsenSiswas extends ListRecords
             return [
                 AbsenSiswa::ABSEN_DHUHA => Tab::make()
                     ->modifyQueryUsing(fn (Builder $query) => $query->where('tipe_absen', AbsenSiswa::ABSEN_DHUHA)->where('semester_id', $semesterId)
+                    ->whereBetween('tanggal', [$tanggalMulai, $tanggalAkhir])
+                    ->orderByDesc('created_at')),
+                AbsenSiswa::ABSEN_DZUHUR => Tab::make()
+                    ->modifyQueryUsing(fn (Builder $query) => $query->where('tipe_absen', AbsenSiswa::ABSEN_DZUHUR)->where('semester_id', $semesterId)
                     ->whereBetween('tanggal', [$tanggalMulai, $tanggalAkhir])
                     ->orderByDesc('created_at')),
                 AbsenSiswa::ABSEN_ASHAR => Tab::make()

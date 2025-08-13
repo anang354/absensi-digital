@@ -57,7 +57,7 @@ class SiswaScanController extends Controller
                 ]);
                 if($absen) {
                     echo "success|Berhasil absen|".$img."|".$siswa->nama."|".$siswa->kelas->nama_kelas;
-                    if($siswa->nomor_hp !== null) {
+                    if($siswa->nomor_hp !== null && $request->tipe !== 'dzuhur') {
                         $phoneNumber = $siswa->nomor_hp;
                         $message = "Assalamualaikum Wr.Wb\n";
                         $message .= "Bapak/Ibu wali murid dari " . $siswa->nama . ".\n"; // Baris baru setelah nama siswa
