@@ -4,22 +4,26 @@ namespace App\Filament\Pages;
 
 use Filament\Forms\Form;
 use Filament\Pages\Page;
+use Filament\Tables\Table;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Contracts\HasTable;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Tables\Concerns\InteractsWithTable;
 use Illuminate\Database\Eloquent\Builder; // Untuk query Builder
 use Livewire\Attributes\Reactive; // Import ini untuk Livewire 3
 
-class SetorHafalan extends Page implements HasForms
+class SetorHafalan extends Page implements HasForms, HasTable
 {
 
-    use InteractsWithForms;
+    use InteractsWithForms, InteractsWithTable;
 
     public ?array $siswaData = null;
     public $siswa_id, $surat, $ayat, $nilai, $keterangan;
@@ -34,6 +38,38 @@ class SetorHafalan extends Page implements HasForms
     public static function canAccess(): bool
     {
         return auth()->user()->level !== 'siswa';
+    }
+
+    public function table(Table $table): Table
+    {
+        $today = \Carbon\Carbon::today();
+        $yesterday = \Carbon\Carbon::yesterday();
+        return $table
+        ->query(\App\Models\SetorHafalan::query()->where('user_id', auth()->user()->id)->whereBetween('created_at', [$yesterday, $today->endOfDay()])->orderByDesc('created_at'))
+        ->columns([
+            TextColumn::make('siswa.nama')->searchable(),
+                TextColumn::make('siswa.kelas.nama_kelas'),
+                TextColumn::make('surat'),
+                TextColumn::make('ayat'),
+                TextColumn::make('nilai')
+                ->badge()
+                ->color(fn (string $state): string => match ($state) {
+                    'Mumtaz' => 'success',
+                    'Jayyid Jiddan' => 'success',
+                    'Jayyid' => 'info',
+                    'Maqbul' => 'warning',
+                    'Naqis' => 'danger',
+                }),
+                TextColumn::make('created_at')->label('Waktu')
+                ->toggleable()
+                ->date('d M Y, H:i'),
+                TextColumn::make('keterangan')
+                ->toggleable(isToggledHiddenByDefault: true),
+            ])
+            ->actions([
+                \Filament\Tables\Actions\DeleteAction::make()
+                    ->visible(fn(\App\Models\SetorHafalan $record) => auth()->user()->id === $record->user_id),
+            ]);
     }
 
     public function form(Form $form): Form

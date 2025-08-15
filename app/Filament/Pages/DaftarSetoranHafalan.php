@@ -44,13 +44,14 @@ class DaftarSetoranHafalan extends Page implements HasTable
     {
         if(auth()->user()->level === 'admin' || auth()->user()->level === 'superadmin')
         {
-            $queryHafalan = SetorHafalan::query()->where('semester_id', $this->getSemester());
+            $queryHafalan = SetorHafalan::query()->where('semester_id', $this->getSemester())->orderByDesc('created_at');
         } else {
             $queryHafalan = SetorHafalan::query()
             ->where('semester_id', $this->getSemester())
             ->whereHas('siswa.kelas', function (Builder $query) {
                 $query->where('jenjang', auth()->user()->guru->jenjang);
-            });
+            })
+            ->orderByDesc('created_at');
         }
         return $table
             ->query(
