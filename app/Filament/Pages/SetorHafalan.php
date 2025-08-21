@@ -27,7 +27,7 @@ class SetorHafalan extends Page implements HasForms, HasTable
 
     public ?array $siswaData = null;
     public $siswa_id, $surat, $ayat, $nilai, $keterangan;
-    public ?array $data = []; 
+    public ?array $data = [];
 
     protected static ?string $navigationIcon = 'heroicon-o-book-open';
 
@@ -49,7 +49,7 @@ class SetorHafalan extends Page implements HasForms, HasTable
         ->columns([
             TextColumn::make('siswa.nama')->searchable(),
                 TextColumn::make('siswa.kelas.nama_kelas'),
-                TextColumn::make('surat'),
+                TextColumn::make('surat')->limit(50),
                 TextColumn::make('ayat'),
                 TextColumn::make('nilai')
                 ->badge()
@@ -73,8 +73,8 @@ class SetorHafalan extends Page implements HasForms, HasTable
     }
 
     public function form(Form $form): Form
-    {   
-        return $form 
+    {
+        return $form
         ->schema([
             Section::make('')
             ->schema([
@@ -142,7 +142,7 @@ class SetorHafalan extends Page implements HasForms, HasTable
         ]);
     }
 
-    protected function getFormActions(): array 
+    protected function getFormActions(): array
     {
         return [
             Action::make('save')->submit('save')->label('Simpan Hafalan')

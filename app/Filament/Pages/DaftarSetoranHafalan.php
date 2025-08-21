@@ -19,7 +19,7 @@ class DaftarSetoranHafalan extends Page implements HasTable
 {
 
     use InteractsWithTable;
-    
+
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     protected static string $view = 'filament.pages.daftar-setoran-hafalan';
@@ -60,7 +60,7 @@ class DaftarSetoranHafalan extends Page implements HasTable
             ->columns([
                 TextColumn::make('siswa.nama')->searchable(),
                 TextColumn::make('siswa.kelas.nama_kelas'),
-                TextColumn::make('surat'),
+                TextColumn::make('surat')->limit(50),
                 TextColumn::make('ayat'),
                 TextColumn::make('nilai')
                 ->badge()
