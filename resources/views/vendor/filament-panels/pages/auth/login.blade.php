@@ -6,9 +6,15 @@
             {{ $this->registerAction }}
         </x-slot>
     @endif
-
+        @php
+            if(\App\Models\Pengaturan::first() && \App\Models\Pengaturan::first()->logo_sekolah) {
+                $logoPath = asset('storage/' . \App\Models\Pengaturan::first()->logo_sekolah);
+            } else {
+                $logoPath = asset('css/logo_default.png'); // Ganti dengan path ke file default Anda
+            }
+        @endphp
     <div class="flex justify-center">
-        <img src="{{ asset('storage/'.\App\Models\Pengaturan::first()->value('logo_sekolah')) }}" width="120px" alt="Logo Sekolah">
+        <img src="{{ $logoPath }}" width="120px" alt="Logo Sekolah">
     </div>
 
     {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::AUTH_LOGIN_FORM_BEFORE, scopes: $this->getRenderHookScopes()) }}

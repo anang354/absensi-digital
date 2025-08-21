@@ -25,6 +25,21 @@ class AdminPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
+        // 1. Tentukan URL favicon default
+        $faviconUrl = asset('css/logo_default.png'); // Ganti dengan path ke file default Anda
+
+        // 2. Periksa apakah tabel 'pengaturans' sudah ada di database
+        if (\Illuminate\Support\Facades\Schema::hasTable('pengaturans')) {
+            // 3. Jika tabel ada, ambil logo dari database
+            //    gunakan optional() untuk mencegah error jika tabel kosong
+            $logoPath = \App\Models\Pengaturan::first()?->logo_sekolah;
+
+            // 4. Jika logo ditemukan, gunakan path tersebut
+            if ($logoPath) {
+                $faviconUrl = asset('storage/' . $logoPath);
+            }
+        }
+
         return $panel
             ->default()
             ->id('admin')
@@ -50,7 +65,7 @@ class AdminPanelProvider extends PanelProvider
                     ->url('/admin/setor-hafalan')
                     ->visible(fn ():bool => !auth()->user()->isSiswa()),
             ])
-            ->favicon(asset('storage/'.\App\Models\Pengaturan::first()->value('logo_sekolah')))
+            ->favicon($faviconUrl)
             ->databaseNotifications()
             ->maxContentWidth('full')
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
@@ -78,7 +93,7 @@ class AdminPanelProvider extends PanelProvider
                 Authenticate::class,
             ])
             ->plugins([
-                
+
             ]);
     }
 }
